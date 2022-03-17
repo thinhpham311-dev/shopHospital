@@ -1,0 +1,285 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+Route::get('database',function(){
+ Schema::create('staff', function ( $table) {
+         $table->bigIncrements('id');
+            $table->bigInteger('id_user')->unsigned();
+            $table->timestamps();
+            //thêm khóa chính
+
+            //thêm index
+            $table->index('id_user');
+            //thêm khóa ngoại
+           $table->foreign('id_user')->references('id')->on('users');
+    });
+  });
+//start login admin
+Route::get('admin/login','Admin\UsersController@getLogin_Admin');
+Route::post('admin/login','Admin\UsersController@postLogin_Admin');
+Route::get('admin/logout','Admin\UsersController@getLogout_Admin');
+//end login admin
+
+Route::group(['prefix'=>'admin','middleware'=>'adminLogin'],function(){
+	Route::get('/','Admin\HomeController@getIndex');
+	Route::group(['prefix'=>'ajax'],function(){
+    	Route::get('bill_detail/{id_bill}','Admin\Ajaxcontroller@getBillDetail');
+    });
+    Route::group(['prefix'=>'categorys'],function(){
+    		Route::get('index','Admin\CategoryController@getIndex');
+    		Route::get('create','Admin\CategoryController@getCreate');
+    		Route::post('create','Admin\CategoryController@postCreate');
+    		Route::get('edit/{id}','Admin\CategoryController@getEdit');
+    		Route::post('edit/{id}','Admin\CategoryController@postEdit');
+    		Route::get('delete/{id}','Admin\CategoryController@getDelete');
+    });
+	Route::group(['prefix'=>'products'],function(){
+		    Route::get('index','Admin\ProductController@getIndex');
+		    Route::get('create','Admin\ProductController@getCreate');
+		    Route::post('create','Admin\ProductController@postCreate');
+		    Route::get('edit/{id}','Admin\ProductController@getEdit');
+		    Route::post('edit/{id}','Admin\ProductController@postEdit');
+		    Route::get('delete/{id}','Admin\ProductController@getDelete');
+		    Route::get('search','Admin\ProductController@getSearch');
+		   Route::get('detail/{id}','Admin\ProductController@getDetails');
+           Route::get('VATproduct/{id}','Admin\ProductController@getStatusVAT');
+	});
+	Route::group(['prefix'=>'type_products'],function(){
+		    Route::get('index','Admin\TypeProductController@getIndex');
+		    Route::get('create','Admin\TypeProductController@getCreate');
+		    Route::post('create','Admin\TypeProductController@postCreate');
+		    Route::get('edit/{id}','Admin\TypeProductController@getEdit');
+		    Route::post('edit/{id}','Admin\TypeProductController@postEdit');
+		    Route::get('delete/{id}','Admin\TypeProductController@getDelete');
+		     Route::get('search','Admin\TypeProductController@getSearch');
+	});
+    Route::group(['prefix'=>'providers'],function(){
+            Route::get('index','Admin\ProviderController@getIndex');
+            Route::get('create','Admin\ProviderController@getCreate');
+            Route::post('create','Admin\ProviderController@postCreate');
+            Route::get('edit/{id}','Admin\ProviderController@getEdit');
+            Route::post('edit/{id}','Admin\ProviderController@postEdit');
+            Route::get('delete/{id}','Admin\ProviderController@getDelete');
+          
+    });
+	Route::group(['prefix'=>'color_products'],function(){
+			Route::get('index','Admin\Color_ProductController@getIndex');
+			Route::get('create','Admin\Color_ProductController@getCreate');
+			Route::post('create','Admin\Color_ProductController@postCreate');
+			Route::get('edit/{id}','Admin\Color_ProductController@getEdit');
+		    Route::post('edit/{id}','Admin\Color_ProductController@postEdit');
+		    Route::get('delete/{id}','Admin\Color_ProductController@getDelete');
+
+	});
+	 Route::group(['prefix'=>'accounts'],function(){
+			Route::get('index','Admin\AccountsController@getIndex');
+			Route::get('create','Admin\AccountsController@getCreate');
+			Route::post('create','Admin\AccountsController@postCreate');
+			Route::get('edit/{id}','Admin\AccountsController@getEdit');
+		    Route::post('edit/{id}','Admin\AccountsController@postEdit');
+		    Route::get('delete/{id}','Admin\AccountsController@getDelete');
+		    Route::get('search','Admin\AccountsController@getSearch');
+            Route::get('statuspost/{id}','Admin\AccountsController@getStatusPost');
+	});
+	Route::group(['prefix'=>'customers'],function(){
+			Route::get('index','Admin\CustomerController@getIndex');
+			Route::get('create','Admin\CustomerController@getCreate');
+			Route::post('create','Admin\CustomerController@postCreate');
+			Route::get('edit/{id}','Admin\CustomerController@getEdit');
+			Route::post('edit/{id}','Admin\CustomerController@postEdit');
+			Route::get('delete/{id}','Admin\CustomerController@getDelete');
+			Route::get('search','Admin\CustomerController@getSearch');
+	});
+	Route::group(['prefix'=>'bills'],function(){
+			Route::get('list_all_bill_notpayment','Admin\BillController@getList_All_Bil_NotPayment');
+	        Route::get('list_all_bill_transport','Admin\BillController@getList_All_Bil_Transport');
+	        Route::get('list_all_bill_payment','Admin\BillController@getList_All_Bil_Payment');
+	        Route::get('delete/{id}','Admin\BillController@getDelete');
+	        Route::get('edit_status/{id}','Admin\BillController@getEdit_Status');
+           Route::get('search','Admin\BillController@getSearch');
+            Route::get('print_bill/{id_bill}','Admin\BillController@getPrint_Bill');
+            Route::get('print_millet','Admin\BillController@getPrint_millet');
+	});
+	Route::group(['prefix'=>'comments'],function(){
+			Route::get('index','Admin\CommentController@getIndex');
+            Route::get('delete/{id}','Admin\CommentController@getDelete');
+	});
+	Route::group(['prefix'=>'profile'],function(){
+			Route::get('info_account','Admin\ProfileController@getInfo_Account');
+	        Route::get('update_account/{id}','Admin\ProfileController@getUpdate_Account');
+	        Route::post('update_account/{id}','Admin\ProfileController@postUpdate_Account');
+	        Route::get('edit_password/{id}','Admin\ProfileController@getEdit_Password');
+	        Route::post('edit_password/{id}','Admin\ProfileController@postEdit_Password');
+	});
+	Route::group(['prefix'=>'image_product'],function(){
+        Route::post('create','Admin\Image_ProductController@postCreate');
+        Route::get('delete/{id}','Admin\Image_ProductController@getDelete');
+    });
+    Route::group(['prefix'=>'taxonomys'],function(){
+    	Route::get('index','Admin\TaxonomyController@getIndex');
+    	Route::post('create','Admin\TaxonomyController@postCreate');
+    	Route::get('edit/{id}','Admin\TaxonomyController@getEdit');
+    	Route::post('edit/{id}','Admin\TaxonomyController@postEdit');
+    	Route::get('delete/{id}','Admin\TaxonomyController@getDelete');
+
+    });
+    Route::group(['prefix'=>'posts'],function(){
+    	Route::get('index','Admin\PostController@getIndex');
+    	Route::get('create','Admin\PostController@getCreate');
+    	Route::post('create','Admin\PostController@postCreate');
+    	Route::get('edit/{id}','Admin\PostController@getEdit');
+    	Route::post('edit/{id}','Admin\PostController@postEdit');
+    	Route::get('delete/{id}','Admin\PostController@getDelete');
+    	Route::get('search','Admin\PostController@getSearch');
+    	Route::get('statuspost/{id}','Admin\PostController@getStatusPost');
+    	
+    });
+    Route::group(['prefix'=>'contacts'],function(){
+    	Route::get('index','Admin\ContactController@getIndex');
+    	 Route::get('statuschange/{id}','Admin\ContactController@getStatusChange');
+    	 Route::get('delete/{id}','Admin\ContactController@getDelete');
+    });
+    Route::group(['prefix'=>'sliders'],function(){
+    	Route::get('index','Admin\SliderController@getIndex');
+        Route::get('create','Admin\SliderController@getCreate');
+        Route::post('create','Admin\SliderController@postCreate');
+        Route::get('edit/{id}','Admin\SliderController@getEdit');
+        Route::post('edit/{id}','Admin\SliderController@postEdit');
+        Route::get('delete/{id}','Admin\SliderController@getDelete');
+    });
+   Route::group(['prefix'=>'comment_post'], function(){
+        Route::get('index','Admin\CommmentPostController@getIndex');
+        Route::get('delete/{id}','Admin\CommmentPostController@getDelete');
+   });
+ });
+Route::get('/','Client\HomeController@getIndex');
+
+Route::group(['prefix'=>'client'],function(){
+
+        Route::group(['prefix'=>'ajax'],function(){
+            Route::get('bill_detail_me/{id_bill}','Client\Ajaxcontroller@getBillDetail_Me');
+            Route::get('answer_comment/{id_comment}','Client\AjaxController@getAnswerComment');
+        });
+        Route::group(['prefix'=>'accounts'],function(){
+        	Route::get('login','Client\AccountsController@getLogin');
+        	Route::post('login','Client\AccountsController@postLogin');
+        	Route::get('logout','Client\AccountsController@getLogout');
+        	Route::post('register','Client\AccountsController@postRegister');
+        	Route::get('profile','Client\AccountsController@getProfile');
+            Route::get('edit_profile/{id}','Client\AccountsController@getEdit_Profile');
+           	Route::post('edit_profile/{id}','Client\AccountsController@postEdit_Profile');
+            Route::get('edit_password/{id}','Client\AccountsController@getEdit_Password');
+           	Route::post('edit_password/{id}','Client\AccountsController@postEdit_Password');
+        });
+        Route::group(['prefix'=>'products'],function(){
+            Route::get('delete_comment/{id}','Client\ProductController@getDeletecomment');
+            Route::get('delete_Answercomment','Client\ProductController@getDeleteAnswercomment');
+        	Route::get('Detail_product/{id}','Client\ProductController@getDetail_Product');
+        	Route::get('add_cart/{id}','Client\ProductController@getAdd_Cart');
+            Route::post('addcart_2','Client\ProductController@postAddCart_2');
+        	Route::post('update_cart','Client\ProductController@postUpdateQuantityCart');
+        	Route::get('delete_cart/{id}','Client\ProductController@getDelete_Cart');
+        	Route::get('payment_cart','Client\ProductController@getPayment_Cart');
+        	Route::post('payment_cart','Client\ProductController@postPayment_Cart');
+        	Route::get('list_product_type/{id}','Client\ProductController@getList_Product_Type');
+            Route::get('view_bill_me','Client\ProductController@getView_Bill_Me');
+            Route::get('reviews_products/{id}','Client\ProductController@getReviews_Products');
+            Route::post('reviews_products/{id_bill}','Client\ProductController@postReviews_Products');
+            Route::get('search_price/{gia}','Client\ProductController@getSearchPrice');
+             Route::get('search_price_2/{gia1}/{gia2}','Client\ProductController@getSearchPrice2');
+
+        });
+        Route::group(['prefix'=>'taxonomys'],function(){
+            Route::get('list_taxonomy/{id}','Client\TaxonomyController@getList_Taxonomy');
+        });
+        Route::group(['prefix'=>'type_products'],function(){
+        	Route::get('list_category/{id}','Client\TypeproductController@getList_Category');
+        });
+        Route::group(['prefix'=>'contacts'],function(){
+        	Route::get('index','Client\ContractController@getIndex');
+        	Route::post('create','Client\ContractController@postCreate');
+        });
+        Route::group(['prefix'=>'posts'],function(){
+            Route::get('list_posts','Client\PostController@getList_Posts');
+            Route::get('details_posts/{id}','Client\PostController@getDetailsPosts');
+        });
+        Route::group(['prefix'=>'search'],function(){
+            Route::get('index','Client\SearchController@getIndex');
+        });
+        Route::group(['prefix'=>'comments'],function(){
+            Route::post('create','Client\CommentController@postCreate');
+        });
+        Route::group(['prefix'=>'comment_posts'],function(){
+            Route::post('create','Client\CommmentPostController@postCreate');
+        });
+        Route::group(['prefix'=>'answer_comment'],function(){
+            Route::post('create','Client\Answer_CommentController@postCreate');
+        });
+
+    });
+Route::get('/staff/','Staff\HomeController@getIndex');
+
+    Route::group(['prefix'=>'manage'],function(){
+        Route::group(['prefix'=>'ajax'],function(){
+            Route::get('bill_detail/{id_bill}','Admin\Ajaxcontroller@getBillDetail');
+        });
+        Route::group(['prefix'=>'posts'],function(){
+            Route::get('index','Staff\PostController@getIndex');
+            Route::get('create','Staff\PostController@getCreate');
+            Route::post('create','Staff\PostController@postCreate');
+            Route::get('edit/{id}','Staff\PostController@getEdit');
+            Route::post('edit/{id}','Staff\PostController@postEdit');
+            Route::get('delete/{id}','Staff\PostController@getDelete');
+            Route::get('search','Staff\PostController@getSearch');
+        });
+        Route::group(['prefix'=>'taxonomys'],function(){
+            Route::get('index','Staff\TaxonomyController@getIndex');
+            Route::post('create','Staff\TaxonomyController@postCreate');
+            Route::get('edit/{id}','Staff\TaxonomyController@getEdit');
+            Route::post('edit/{id}','Staff\TaxonomyController@postEdit');
+            Route::get('delete/{id}','Staff\TaxonomyController@getDelete');
+        });
+        Route::group(['prefix'=>'bills'],function(){
+            Route::get('list_all_bill_notpayment','Staff\BillController@getList_All_Bil_NotPayment');
+            Route::get('list_all_bill_transport','Staff\BillController@getList_All_Bil_Transport');
+            Route::get('list_all_bill_payment','Staff\BillController@getList_All_Bil_Payment');
+            Route::get('delete/{id}','Staff\BillController@getDelete');
+            Route::get('edit_status/{id}','Staff\BillController@getEdit_Status');
+            Route::get('print_bill/{id_bill}','Staff\BillController@getPrint_Bill');
+        });
+        Route::group(['prefix'=>'sliders'],function(){
+            Route::get('index','Staff\SliderController@getIndex');
+            Route::get('create','Staff\SliderController@getCreate');
+            Route::post('create','Staff\SliderController@postCreate');
+            Route::get('edit/{id}','Staff\SliderController@getEdit');
+            Route::post('edit/{id}','Staff\SliderController@postEdit');
+            Route::get('delete/{id}','Staff\SliderController@getDelete');
+        });
+        Route::group(['prefix'=>'customers'],function(){
+            Route::get('index','Staff\CustomerController@getIndex');
+            Route::get('create','Staff\CustomerController@getCreate');
+            Route::post('create','Staff\CustomerController@postCreate');
+            Route::get('edit/{id}','Staff\CustomerController@getEdit');
+            Route::post('edit/{id}','Staff\CustomerController@postEdit');
+            Route::get('delete/{id}','Staff\CustomerController@getDelete');
+        });
+        Route::group(['prefix'=>'comments'],function(){
+            Route::get('index','Staff\CommentController@getIndex');
+        });
+        Route::group(['prefix'=>'profile'],function(){
+            Route::get('info_account','Staff\ProfileController@getInfo_Account');
+            Route::get('update_account/{id}','Staff\ProfileController@getUpdate_Account');
+            Route::post('update_account/{id}','Staff\ProfileController@postUpdate_Account');
+            Route::get('edit_password/{id}','Staff\ProfileController@getEdit_Password');
+            Route::post('edit_password/{id}','Staff\ProfileController@postEdit_Password');
+        });
+    });
